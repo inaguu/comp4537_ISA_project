@@ -2,6 +2,11 @@ const express = require('express');
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
 
+
+const db_utils = include("database/db_utils");
+const success = db_utils.printMySQLVersion();
+
+
 const app = express();
 
 app.set('view engine', 'ejs');
