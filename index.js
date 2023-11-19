@@ -39,7 +39,7 @@ app.post('/api/ISA/createuser', async (req,res)=> { // Post Signup
         if (created_user) {
             res.status(201).send(JSON.stringify({
                 message: "Entry created successfully",
-                action: "inserted",
+                action: "success",
                 info: {username: username, email: email}
             }))
         } else {
