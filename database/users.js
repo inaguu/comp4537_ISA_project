@@ -29,7 +29,7 @@ async function createUser(postData) {
 
 async function getUser(postData) {
 	let getUserSQL = `
-		SELECT user_id, username, email, hashedPassword
+		SELECT user_id, username, email, password
 		FROM users
 		WHERE email = :email;
 	`;

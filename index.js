@@ -37,10 +37,65 @@ app.post('/api/ISA/createuser', async (req,res)=> { // Post Signup
         })
 
         if (created_user) {
-            console.log(created_user)
-            res.status(201)
+            res.status(201).send(JSON.stringify({
+                message: "Entry created successfully",
+                action: "inserted",
+                info: {username: username, email: email}
+            }))
         } else {
-            res.status(400).send(JSON.stringify(created_user))
+            res.status(400).send(JSON.stringify({
+                message: "Error inserting user to the database",
+                action: "error",
+                info: {username: username, email: email}
+            }))
+        }
+    })
+});
+
+app.post("/api/ISA/login", async (req, res) => {
+    let body = ""
+        
+    req.on('data', function(chunk) {
+        if (chunk != null) {
+            body += chunk
+        }
+    })
+
+    req.on("end", async () => {
+        let data = JSON.parse(body)
+        
+        let email = data.email
+        let password = data.password
+
+        const grabbed_user = db_users.getUser({
+            email: email
+        })
+
+        if (grabbed_user) {
+            if (grabbed_user.length == 1) {
+                if (bcrypt.compareSync(password, grabbed_user[0].password)) {
+                    res.status(200).send(JSON.stringify({
+                        message: "Found user, logging in",
+                        action: "success",
+                        info: grabbed_user
+                    }))
+                } else {
+                    console.log("wrong password")
+                    res.status(401).send(JSON.stringify({message: "Incorrect password", action: "invalid"}))
+                }
+            } else {
+                res.status(401).send(JSON.stringify({
+                    message: "Invalid number of users found",
+                    action: "invalid",
+                    info: grabbed_user
+                }))
+            }
+        } else {
+            res.status(401).send(JSON.stringify({
+                message: "No user matches info sent",
+                action: "missing",
+                info: grabbed_user
+            }))
         }
     })
 });
