@@ -64,11 +64,11 @@ app.post("/api/ISA/login", async (req, res) => {
     req.on("end", async () => {
         let data = JSON.parse(body)
         
-        let email = data.email
+        let username = data.username
         let password = data.password
 
         const grabbed_user = db_users.getUser({
-            email: email
+            username: username
         })
 
         if (grabbed_user) {

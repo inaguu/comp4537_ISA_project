@@ -31,11 +31,11 @@ async function getUser(postData) {
 	let getUserSQL = `
 		SELECT user_id, username, email, password
 		FROM users
-		WHERE email = :email;
+		WHERE username = :username;
 	`;
 
 	let params = {
-		email: postData.email,
+		username: postData.username,
 	};
 
 	try {
