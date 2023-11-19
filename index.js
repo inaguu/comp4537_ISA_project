@@ -1,4 +1,6 @@
 const express = require('express');
+const bcrypt = require("bcrypt");
+const saltRounds = 12;
 
 const app = express();
 

@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/inaguu/comp4537_ISA_project#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1"
   }
 }
