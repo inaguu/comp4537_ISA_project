@@ -37,7 +37,7 @@ app.post('/api/ISA/createuser', async (req,res)=> { // Post Signup
         let password = data.password
         let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-        const created_user = db_users.createUser({
+        const created_user = await db_users.createUser({
             username: username,
             email: email,
             password: hashedPassword
@@ -74,14 +74,12 @@ app.post("/api/ISA/login", async (req, res) => {
         let username = data.username
         let password = data.password
 
-        const grabbed_user = db_users.getUser({
+        const grabbed_user = await db_users.getUser({
             username: username
         })
 
-        console.log(grabbed_user[0].length)
-
         if (grabbed_user) {
-            if (grabbed_user[0].length == 1) {
+            if (grabbed_user.length == 1) {
                 if (bcrypt.compareSync(password, grabbed_user[0].password)) {
                     res.status(200).send(JSON.stringify({
                         message: "Found user, logging in",
