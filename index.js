@@ -47,12 +47,14 @@ app.post('/api/ISA/createuser', async (req,res)=> { // Post Signup
             res.status(201).send(JSON.stringify({
                 message: "Entry created successfully",
                 action: "success",
+                success: true,
                 info: {username: username, email: email}
             }))
         } else {
             res.status(400).send(JSON.stringify({
                 message: "Error inserting user to the database",
                 action: "error",
+                success: false,
                 info: {username: username, email: email}
             }))
         }
@@ -84,16 +86,22 @@ app.post("/api/ISA/login", async (req, res) => {
                     res.status(200).send(JSON.stringify({
                         message: "Found user, logging in",
                         action: "success",
+                        success: true,
                         info: grabbed_user
                     }))
                 } else {
                     console.log("wrong password")
-                    res.status(401).send(JSON.stringify({message: "Incorrect password", action: "invalid"}))
+                    res.status(401).send(JSON.stringify({
+                        message: "Incorrect password", 
+                        action: "invalid", 
+                        success: false
+                    }))
                 }
             } else {
                 res.status(401).send(JSON.stringify({
                     message: "Invalid number of users found",
                     action: "invalid",
+                    success: false,
                     info: grabbed_user
                 }))
             }
@@ -101,6 +109,7 @@ app.post("/api/ISA/login", async (req, res) => {
             res.status(401).send(JSON.stringify({
                 message: "No user matches info sent",
                 action: "missing",
+                success: false,
                 info: grabbed_user
             }))
         }
