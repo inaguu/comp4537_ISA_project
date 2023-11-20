@@ -78,6 +78,8 @@ app.post("/api/ISA/login", async (req, res) => {
             username: username
         })
 
+        console.log(grabbed_user.length)
+
         if (grabbed_user) {
             if (grabbed_user.length == 1) {
                 if (bcrypt.compareSync(password, grabbed_user[0].password)) {
