@@ -106,7 +106,7 @@ app.post("/api/ISA/login", async (req, res) => {
 
                     console.log('Access Token:', accessToken);
 
-                    res.cookie("token", accessToken, { maxAge: 3600000, sameSite: "none", secure: true, httpOnly: true })
+                    res.cookie("token", accessToken, { maxAge: 3600000, sameSite: "none", secure: false, httpOnly: true })
 
                     if (grabbed_user[0].is_admin == 1) {
                         res.status(200).send(JSON.stringify({
