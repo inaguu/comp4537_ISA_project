@@ -102,11 +102,11 @@ app.post("/api/ISA/login", async (req, res) => {
                     let accessToken = jwt.sign({
                         username: username,
                         email: grabbed_user[0].email
-                    }, TOKEN_SECRET, { expiresIn: 3600000 })
+                    }, TOKEN_SECRET, { expiresIn: "1hr" })
 
                     console.log('Access Token:', accessToken);
 
-                    res.cookie("key", accessToken, { sameSite: "none", secure: true, httpOnly: true })
+                    res.cookie("token", accessToken, { maxAge: 3600000, sameSite: "none", secure: true, httpOnly: true })
 
                     if (grabbed_user[0].is_admin == 1) {
                         res.status(200).send(JSON.stringify({
