@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const express = require('express');
 const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser');
 const TOKEN_SECRET = require('crypto').randomBytes(64).toString('hex')
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
@@ -14,12 +15,24 @@ const success = db_utils.printMySQLVersion();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cookieParser())
+
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
-    next()
-})
+    res.header('Access-Control-Allow-Origin', 'https://jkayftipql.us14.qoddiapp.com'); // Replace with your actual frontend origin
+    res.header('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    
+    // Allow credentials (if needed)
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
+
 
 app.post('/api/ISA/createuser', async (req,res)=> { // Post Signup
     let body = ""
@@ -85,19 +98,33 @@ app.post("/api/ISA/login", async (req, res) => {
         if (grabbed_user) {
             if (grabbed_user.length == 1) {
                 if (bcrypt.compareSync(password, grabbed_user[0].password)) {
-
+                    
                     let accessToken = jwt.sign({
                         username: username,
                         email: grabbed_user[0].email
                     }, TOKEN_SECRET, { expiresIn: 3600000 })
 
-                    res.cookie("key", accessToken, { secure: true, httpOnly: true })
-                    res.status(200).send(JSON.stringify({
-                        message: "Found user, logging in",
-                        action: "success",
-                        success: true,
-                        info: grabbed_user
-                    }))
+                    console.log('Access Token:', accessToken);
+
+                    res.cookie("key", accessToken, { sameSite: "None", secure: true, httpOnly: true })
+
+                    if (grabbed_user[0].is_admin == 1) {
+                        res.status(200).send(JSON.stringify({
+                            message: "Found user, logging in",
+                            action: "success",
+                            success: true,
+                            is_admin: true,
+                            info: grabbed_user
+                        }))
+                    } else {
+                        res.status(200).send(JSON.stringify({
+                            message: "Found user, logging in",
+                            action: "success",
+                            success: true,
+                            is_admin: false,
+                            info: grabbed_user
+                        }))
+                    }
                 } else {
                     console.log("wrong password")
                     res.status(401).send(JSON.stringify({
