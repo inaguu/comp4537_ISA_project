@@ -2,6 +2,8 @@ require("./utils");
 require("dotenv").config();
 
 const express = require('express');
+const jwt = require('jsonwebtoken')
+const TOKEN_SECRET = require('crypto').randomBytes(64).toString('hex')
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
 
@@ -43,7 +45,7 @@ app.post('/api/ISA/createuser', async (req,res)=> { // Post Signup
             password: hashedPassword
         })
 
-        if (created_user) {
+        if (created_user) {            
             res.status(201).send(JSON.stringify({
                 message: "Entry created successfully",
                 action: "success",
@@ -83,6 +85,13 @@ app.post("/api/ISA/login", async (req, res) => {
         if (grabbed_user) {
             if (grabbed_user.length == 1) {
                 if (bcrypt.compareSync(password, grabbed_user[0].password)) {
+
+                    let accessToken = jwt.sign({
+                        username: username,
+                        email: grabbed_user[0].email
+                    }, TOKEN_SECRET, { expiresIn: 3600000 })
+
+                    res.cookie("key", accessToken, { secure: true, httpOnly: true })
                     res.status(200).send(JSON.stringify({
                         message: "Found user, logging in",
                         action: "success",
